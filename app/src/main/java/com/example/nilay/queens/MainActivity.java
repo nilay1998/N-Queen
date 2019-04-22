@@ -1,14 +1,20 @@
 package com.example.nilay.queens;
 
+import android.graphics.Color;
+import android.hardware.Camera;
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.GridLayout;
 import android.widget.GridView;
 import java.util.concurrent.TimeUnit;
 import android.widget.LinearLayout;
+import android.widget.TableLayout;
 import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
@@ -18,19 +24,18 @@ public class MainActivity extends AppCompatActivity {
     LinearLayout linearLayout;
     static MainActivity mn;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mn = MainActivity.this;
-
-
         linearLayout = findViewById(R.id.GridLayout);
-
 
     }
 
     public void start(View view) {
+        linearLayout.removeAllViews();
         EditText editText = findViewById(R.id.editText);
         n = Integer.parseInt(editText.getText().toString());
         array = new LinearLayout[n];
@@ -38,15 +43,25 @@ public class MainActivity extends AppCompatActivity {
         for (int i = 0; i < n; i++) {
             array[i] = new LinearLayout(mn);
             array[i].setOrientation(LinearLayout.HORIZONTAL);
+            //array[i].setPadding(32,0,0,0);
             linearLayout.addView(array[i]);
         }
         textViewArray = new TextView[n];
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
                 textViewArray[j] = new TextView(mn);
+//                textViewArray[j].setWidth(ViewGroup.LayoutParams.WRAP_CONTENT);
+//                textViewArray[j].setHeight(textViewArray[j].getMeasuredWidth());
+                textViewArray[j].setLayoutParams(new TableLayout.LayoutParams(200, 200, 1f));
                 textViewArray[j].setTextSize(50);
+                textViewArray[j].setTextColor(Color.RED);
+                textViewArray[j].setGravity(Gravity.CENTER);
                 textViewArray[j].setPadding(32, 8, 32, 8);
-                mainui(textViewArray[j],"0");
+                if((i%2==0 && j%2==0) || (i%2!=0 && j%2!=0))
+                    textViewArray[j].setBackgroundColor(Color.BLACK);
+                else
+                    textViewArray[j].setBackgroundColor(Color.GRAY);
+                //textViewArray[j].setText("0");
                 array[i].addView(textViewArray[j]);
             }
         }
@@ -55,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
                 try {
-                    Thread.sleep(4000);
+                    Thread.sleep(1000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -67,6 +82,31 @@ public class MainActivity extends AppCompatActivity {
     }
 
     static boolean isSafe(int board[][], int row, int col, int N) {
+        TextView view = (TextView) array[row].getChildAt(col);
+        mainui(view,"?");
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        mainui(view,"");
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        mainui(view,"?");
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        mainui(view,"");
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         int i, j;
         for (i = 0; i < col; i++)
             if (board[row][i] == 1)
@@ -77,7 +117,6 @@ public class MainActivity extends AppCompatActivity {
         for (i = row, j = col; j >= 0 && i < N; i++, j--)
             if (board[i][j] == 1)
                 return false;
-
         return true;
     }
 
@@ -119,7 +158,14 @@ public class MainActivity extends AppCompatActivity {
         mn.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                textView.setText(s);
+                if(s.equals("1"))
+                    textView.setText("Q");
+                else if(s.equals("0"))
+                {
+                    textView.setText("");
+                }
+                else
+                    textView.setText(s);
             }
         });
     }
